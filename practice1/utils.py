@@ -741,6 +741,7 @@ class FIFOQueue(Queue):
     def __init__(self):
         self.A = []
         self.start = 0
+        self.number_of_expanded_nodes = 0
 
     def append(self, item):
         self.A.append(item)
@@ -749,6 +750,7 @@ class FIFOQueue(Queue):
         return len(self.A) - self.start
 
     def extend(self, items):
+        self.number_of_expanded_nodes += 1
         self.A.extend(items)
 
     def pop(self):
@@ -764,6 +766,7 @@ class BranchAndBound():
     def __init__(self):
         self.A = []
         self.start = 0
+        self.number_of_expanded_nodes = 0
 
     def append(self, item):
         self.A.append(item)
@@ -772,6 +775,7 @@ class BranchAndBound():
         return len(self.A) - self.start
 
     def extend(self, items):
+        self.number_of_expanded_nodes += 1
         self.A.extend(items)
 
     def pop(self):

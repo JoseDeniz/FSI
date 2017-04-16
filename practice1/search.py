@@ -125,6 +125,7 @@ def graph_search(problem, fringe):
     while fringe:
         node = fringe.pop()
         if problem.goal_test(node.state):
+            print "Expanded nodes: %d" % fringe.number_of_expanded_nodes
             return node
         if node.state not in closed:
             closed[node.state] = True
@@ -132,8 +133,19 @@ def graph_search(problem, fringe):
     return None
 
 
+def graph_expanded_search(problem, fringe):
+    fringe.append(Node(problem.initial))
+    while fringe:
+        node = fringe.pop()
+        if problem.goal_test(node.state):
+            print "Expanded nodes: %d" % fringe.number_of_expanded_nodes
+            return node
+        fringe.extend(node.expand(problem))
+    return None
+
+
 def branch_and_bound(problem):
-    return graph_search(problem, BranchAndBound())
+    return graph_expanded_search(problem, BranchAndBound())
 
 
 def breadth_first_graph_search(problem):
