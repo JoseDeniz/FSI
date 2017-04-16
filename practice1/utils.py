@@ -25,6 +25,7 @@ except NameError:
 
         def __repr__(self): return ('False', 'True')[self.val]
 
+
     True, False = bool(1), bool(0)
 
 try:
@@ -100,7 +101,6 @@ except NameError:
         class BaseSet:
             "set type (see http://docs.python.org/lib/types-set.html)"
 
-
             def __init__(self, elements=[]):
                 self.dict = {}
                 for e in elements:
@@ -127,7 +127,6 @@ except NameError:
                     if e not in self:
                         return False
                 return True
-
 
             def union(self, other):
                 return type(self)(list(self) + list(other))
@@ -156,6 +155,7 @@ except NameError:
             __sub__ = difference
             __xor__ = symmetric_difference
 
+
         class frozenset(BaseSet):
             "A frozenset is a BaseSet that has a hash value and is immutable."
 
@@ -167,6 +167,7 @@ except NameError:
 
             def __hash__(self):
                 return self.hash
+
 
         class set(BaseSet):
             "A set is a BaseSet that does not have a hash, but is mutable."
@@ -217,10 +218,7 @@ except NameError:
             __isub__ = difference_update
             __ixor__ = symmetric_difference_update
 
-
-
-
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Simple Data Structures: infinity, Dict, Struct
 
 infinity = 1.0e400
@@ -282,7 +280,7 @@ def update(x, **entries):
     return x
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Functions on Sequences (mostly inspired by Common Lisp)
 # NOTE: Sequence functions (count_if, find_if, every, some) take function
 # argument first (like reduce, filter, and map).
@@ -373,7 +371,7 @@ def isin(elt, seq):
     return False
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Functions on sequences of numbers
 # NOTE: these take the sequence argument first, like min and max,
 # and like standard math notation: \sigma (i = 1..n) fn(i)
@@ -449,7 +447,7 @@ def argmax_random_tie(seq, fn):
     return argmin_random_tie(seq, lambda x: -fn(x))
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Statistical and mathematical functions
 
 def histogram(values, mode=0, bin_function=None):
@@ -561,6 +559,7 @@ def normalize(numbers, total=1.0):
     k = total / sum(numbers)
     return [k * n for n in numbers]
 
+
 ## OK, the following are not as widely useful utilities as some of the other
 ## functions here, but they do show up wherever we have 2D grids: Wumpus and
 ## Vacuum worlds, TicTacToe and Checkers, and markov decision Processes.
@@ -596,7 +595,7 @@ def clip(vector, lowest, highest):
     return type(vector)(map(min, map(max, vector, lowest), highest))
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Misc Functions
 
 def printf(format, *args):
@@ -707,7 +706,7 @@ def DataFile(name, mode='r'):
     return AIMAFile(['..', 'data', name], mode)
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Queues: Stack, FIFOQueue, PriorityQueue
 
 class Queue:
@@ -761,6 +760,30 @@ class FIFOQueue(Queue):
         return e
 
 
+class BranchAndBound():
+    def __init__(self):
+        self.A = []
+        self.start = 0
+
+    def append(self, item):
+        self.A.append(item)
+
+    def __len__(self):
+        return len(self.A) - self.start
+
+    def extend(self, items):
+        self.A.extend(items)
+
+    def pop(self):
+        self.A.sort(key=lambda n: n.path_cost)
+        node = self.A[self.start]
+        self.start += 1
+        if self.start > 5 and self.start > len(self.A) / 2:
+            self.A = self.A[self.start:]
+            self.start = 0
+        return node
+
+
 class PriorityQueue(Queue):
     """A queue in which the minimum (or maximum) element (as determined by f and
     order) is returned first. If order is min, the item with minimum f(x) is
@@ -781,9 +804,7 @@ class PriorityQueue(Queue):
         else:
             return self.A.pop()[1]
 
+
 ## Fig: The idea is we can define things like Fig[3,10] later.
 ## Alas, it is Fig[3,10] not Fig[3.10], because that would be the same as Fig[3.1]
-Fig = {} 
-
-
-
+Fig = {}

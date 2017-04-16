@@ -132,6 +132,10 @@ def graph_search(problem, fringe):
     return None
 
 
+def branch_and_bound(problem):
+    return graph_search(problem, BranchAndBound())
+
+
 def breadth_first_graph_search(problem):
     """Search the shallowest nodes in the search tree first. [p 74]"""
     return graph_search(problem, FIFOQueue())  # FIFOQueue -> fringe
@@ -175,7 +179,7 @@ def iterative_deepening_search(problem):
             return result
 
 
-#______________________________________________________________________________
+# ______________________________________________________________________________
 # Informed (Heuristic) Search
 
 def best_first_graph_search(problem, f):
@@ -189,8 +193,11 @@ def best_first_graph_search(problem, f):
     f = memoize(f, 'f')
     return graph_search(problem, PriorityQueue(min, f))
 
+
 greedy_best_first_graph_search = best_first_graph_search
-    # Greedy best-first search is accomplished by specifying f(n) = h(n).
+
+
+# Greedy best-first search is accomplished by specifying f(n) = h(n).
 
 def astar_search(problem, h=None):
     """A* search is best-first graph search with f(n) = g(n)+h(n).
@@ -202,7 +209,6 @@ def astar_search(problem, h=None):
     """
 
     pass
-
 
 
 # _____________________________________________________________________________
