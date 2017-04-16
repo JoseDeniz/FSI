@@ -10,6 +10,7 @@ print "Breadth first %s" % search.breadth_first_graph_search(ab).path()
 # print search.iterative_deepening_search(ab).path()
 # print search.depth_limited_search(ab).path()
 print "Branch and Bound: %s" % search.branch_and_bound(ab).path()
+print "Branch and Bound with heuristic: %s" % search.branch_and_bound_with_heuristic(ab).path()
 
 #print search.astar_search(ab).path()
 

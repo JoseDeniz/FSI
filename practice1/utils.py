@@ -762,7 +762,7 @@ class FIFOQueue(Queue):
         return e
 
 
-class BranchAndBound():
+class BranchAndBound:
     def __init__(self):
         self.A = []
         self.start = 0
@@ -780,6 +780,33 @@ class BranchAndBound():
 
     def pop(self):
         self.A.sort(key=lambda n: n.path_cost)
+        node = self.A[self.start]
+        self.start += 1
+        if self.start > 5 and self.start > len(self.A) / 2:
+            self.A = self.A[self.start:]
+            self.start = 0
+        return node
+
+
+class HeuristicFringe:
+    def __init__(self, heuristic_fn):
+        self.A = []
+        self.start = 0
+        self.number_of_expanded_nodes = 0
+        self.heuristic_fn = heuristic_fn
+
+    def append(self, item):
+        self.A.append(item)
+
+    def __len__(self):
+        return len(self.A) - self.start
+
+    def extend(self, items):
+        self.number_of_expanded_nodes += 1
+        self.A.extend(items)
+
+    def pop(self):
+        self.A.sort(key=lambda n: n.path_cost + self.heuristic_fn(n))
         node = self.A[self.start]
         self.start += 1
         if self.start > 5 and self.start > len(self.A) / 2:

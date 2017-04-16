@@ -148,6 +148,10 @@ def branch_and_bound(problem):
     return graph_expanded_search(problem, BranchAndBound())
 
 
+def branch_and_bound_with_heuristic(problem):
+    return graph_expanded_search(problem, HeuristicFringe(heuristic_fn=problem.h))
+
+
 def breadth_first_graph_search(problem):
     """Search the shallowest nodes in the search tree first. [p 74]"""
     return graph_search(problem, FIFOQueue())  # FIFOQueue -> fringe
