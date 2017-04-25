@@ -21,7 +21,7 @@ def one_hot(x, n):
     return o_h
 
 
-data = np.genfromtxt('iris.data', delimiter=",")  # iris.data file loading
+data = np.genfromtxt('training.data', delimiter=",")  # training.data file loading
 np.random.shuffle(data)  # we shuffle the data
 x_data = data[:, 0:4].astype('f4')  # the samples are the four first rows of data
 y_data = one_hot(data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
