@@ -1,5 +1,8 @@
 import tensorflow as tf
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 
 # Translate a list of labels into an array of 0's and one 1.
@@ -55,15 +58,30 @@ print "   Start training...  "
 print "----------------------"
 
 batch_size = 20
+errors = []
 
-for epoch in xrange(100):
+for epoch in xrange(100000):
     for jj in xrange(len(x_data) / batch_size):
         batch_xs = x_data[jj * batch_size: jj * batch_size + batch_size]
         batch_ys = y_data[jj * batch_size: jj * batch_size + batch_size]
         sess.run(train, feed_dict={x: batch_xs, y_: batch_ys})
 
-    print "Epoch #:", epoch, "Error: ", sess.run(loss, feed_dict={x: batch_xs, y_: batch_ys})
+    error = sess.run(loss, feed_dict={x: batch_xs, y_: batch_ys})
+
+    if errors:
+        last_error = errors[-1]
+        if error >= last_error:
+            print "Minimum error in epoch: %d --- error: %d --- last_error: %d" % (epoch, error, last_error)
+            break
+    errors.append(error)
+
+    print "Epoch #:", epoch, "Error: ", error
     result = sess.run(y, feed_dict={x: batch_xs})
     for b, r in zip(batch_ys, result):
         print b, "-->", r
     print "----------------------------------------------------------------------------------"
+
+plt.plot(errors)
+plt.ylabel('Errors')
+plt.xlabel('Errors')
+plt.savefig('errors_plot.png')
