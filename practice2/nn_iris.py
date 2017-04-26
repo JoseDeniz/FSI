@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -20,22 +21,19 @@ def one_hot(x, n):
     o_h[np.arange(len(x)), x] = 1
     return o_h
 
+
+def read_data_from_file(filename):
+    data = np.genfromtxt(filename, delimiter=",")  # data file loading
+    np.random.shuffle(data)  # we shuffle the data
+    x_data = data[:, 0:4].astype('f4')  # the samples are the four first rows of data
+    y_data = one_hot(data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
+    return x_data, y_data
+
 # Training
-training_data = np.genfromtxt('training.data', delimiter=",")  # training.data file loading
-np.random.shuffle(training_data)  # we shuffle the data
-x_training_data = training_data[:, 0:4].astype('f4')  # the samples are the four first rows of data
-y_training_data = one_hot(training_data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
+x_training_data, y_training_data = read_data_from_file(filename='training.data')
 
 # Validation
-validation_data = np.genfromtxt('validation.data', delimiter=",")  # validation.data file loading
-np.random.shuffle(validation_data)  # we shuffle the data
-x_validation_data = validation_data[:, 0:4].astype('f4')  # the samples are the four first rows of data
-y_validation_data = one_hot(validation_data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
-
-# print "\nSome samples..."
-# for i in range(20):
-#     print x_training_data[i], " -> ", y_training_data[i]
-# print
+x_validation_data, y_validation_data = read_data_from_file(filename='validation.data')
 
 x = tf.placeholder("float", [None, 4])  # samples
 y_ = tf.placeholder("float", [None, 3])  # labels
@@ -113,6 +111,10 @@ for epoch in xrange(1000):
     # for b, r in zip(batch_validation_ys, result):
     #     print b, "-->", r
     # print "----------------------------------------------------------------------------------"
+
+print "----------------------"
+print "   Training finished  "
+print "----------------------"
 
 plt.ylabel('Errors')
 plt.xlabel('Epochs')
