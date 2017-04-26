@@ -29,6 +29,13 @@ def read_data_from_file(filename):
     y_data = one_hot(data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
     return x_data, y_data
 
+
+def print_results(mode, epoch_number, error, batch_xs, batch_ys):
+    print mode, " epoch #:", epoch_number, "Error: ", error
+    result = sess.run(y, feed_dict={x: batch_xs})
+    for b, r in zip(batch_ys, result):
+        print b, "-->", r
+
 # Training
 x_training_data, y_training_data = read_data_from_file(filename='training.data')
 
@@ -100,17 +107,14 @@ for epoch in xrange(1000):
     validation_errors.append(validation_error)
 
     # Training
-    # print "Training epoch #:", epoch, "Error: ", training_error
-    # result = sess.run(y, feed_dict={x: batch_training_xs})
-    # for b, r in zip(batch_training_ys, result):
-    #     print b, "-->", r
+    print_results(mode="Training", epoch_number=epoch, error=training_error,
+                  batch_xs=batch_training_xs, batch_ys=batch_training_ys)
 
     # Validation
-    # print "Validation epoch #:", epoch, "Error: ", validation_error
-    # result = sess.run(y, feed_dict={x: batch_validation_xs})
-    # for b, r in zip(batch_validation_ys, result):
-    #     print b, "-->", r
-    # print "----------------------------------------------------------------------------------"
+    print_results(mode="Validation", epoch_number=epoch, error=validation_error,
+                  batch_xs=batch_validation_xs, batch_ys=batch_validation_ys)
+    print "----------------------------------------------------------------------------------"
+
 
 print "----------------------"
 print "   Training finished  "
