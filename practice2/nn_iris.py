@@ -74,7 +74,7 @@ validation_error_counter = 0
 training_errors = []
 validation_errors = []
 
-for epoch in xrange(1000):
+for epoch in xrange(5000):
 
     for jj in xrange(len(x_training_data) / batch_size):
         batch_training_xs = x_training_data[jj * batch_size: jj * batch_size + batch_size]
@@ -99,8 +99,8 @@ for epoch in xrange(1000):
             validation_error_counter += 1
             if validation_error_counter > maximum_validation_errors:
                 print "Exceeded maximum number[%d] of validation errors upticks, " \
-                      "so the training is stopped in epoch %d\n errors: %s" \
-                      % (maximum_validation_errors, epoch, validation_errors)
+                      "so the training is stopped in epoch %d" \
+                      % (maximum_validation_errors, epoch)
                 break
         else:
             validation_error_counter = 0
