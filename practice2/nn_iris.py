@@ -22,25 +22,33 @@ def one_hot(x, n):
     return o_h
 
 
-def read_data_from_file(filename):
+def read_data_from_filename(filename):
     data = np.genfromtxt(filename, delimiter=",")  # data file loading
     np.random.shuffle(data)  # we shuffle the data
-    x_data = data[:, 0:4].astype('f4')  # the samples are the four first rows of data
-    y_data = one_hot(data[:, 4].astype(int), 3)  # the labels are in the last row. Then we encode them in one hot code
-    return x_data, y_data
+
+    x_data_train = data[0:107, 0:4].astype('f4')  # the samples are the four first rows of data
+    y_data_train = one_hot(data[0:107, 4].astype(int),
+                           3)  # the labels are in the last row. Then we encode them in one hot code
+
+    x_data_validation = data[107:129, 0:4].astype('f4')  # the samples are the four first rows of data
+    y_data_validation = one_hot(data[107:129, 4].astype(int),
+                                3)  # the labels are in the last row. Then we encode them in one hot code
+
+    x_data_test = data[129:151, 0:4].astype('f4')
+    y_data_test = one_hot(data[129:151, 4].astype(int), 3)
+    return x_data_train, y_data_train, x_data_validation, y_data_validation, x_data_test, y_data_test
 
 
-def print_results(mode, epoch_number, error, batch_xs, batch_ys):
+def print_results(mode, error, batch_xs, batch_ys, epoch_number=1):
     print mode, " epoch #:", epoch_number, "Error: ", error
     result = sess.run(y, feed_dict={x: batch_xs})
     for b, r in zip(batch_ys, result):
         print b, "-->", r
 
-# Training
-x_training_data, y_training_data = read_data_from_file(filename='training.data')
 
-# Validation
-x_validation_data, y_validation_data = read_data_from_file(filename='validation.data')
+# Training & validation
+x_training_data, y_training_data, x_validation_data, y_validation_data, x_test_data, y_test_data = read_data_from_filename(
+    filename='iris.data')
 
 x = tf.placeholder("float", [None, 4])  # samples
 y_ = tf.placeholder("float", [None, 3])  # labels
@@ -69,12 +77,15 @@ print "   Start training...  "
 print "----------------------"
 
 batch_size = 20
-maximum_validation_errors = 8
-validation_error_counter = 0
 training_errors = []
 validation_errors = []
+last_validation_error = 1
+validation_error = 0.1
+epoch = 0
+difference = 100.0
 
-for epoch in xrange(5000):
+while validation_error <= last_validation_error and difference > 0.001:
+    epoch += 1
 
     for jj in xrange(len(x_training_data) / batch_size):
         batch_training_xs = x_training_data[jj * batch_size: jj * batch_size + batch_size]
@@ -93,33 +104,38 @@ for epoch in xrange(5000):
     # Validation
     validation_error = sess.run(loss, feed_dict={x: batch_validation_xs, y_: batch_validation_ys})
 
-    if validation_errors:
-        last_validation_error = validation_errors[-1]
-        if validation_error >= last_validation_error:
-            validation_error_counter += 1
-            if validation_error_counter > maximum_validation_errors:
-                print "Exceeded maximum number[%d] of validation errors upticks, " \
-                      "so the training is stopped in epoch %d" \
-                      % (maximum_validation_errors, epoch)
-                break
-        else:
-            validation_error_counter = 0
     validation_errors.append(validation_error)
-
+    if epoch > 1:
+        difference = validation_errors[-2] - validation_error
+    last_validation_error = validation_errors[-1]
     # Training
-    print_results(mode="Training", epoch_number=epoch, error=training_error,
-                  batch_xs=batch_training_xs, batch_ys=batch_training_ys)
+    print_results(mode="Training", error=training_error, batch_xs=batch_training_xs, batch_ys=batch_training_ys,
+                  epoch_number=epoch)
 
     # Validation
-    print_results(mode="Validation", epoch_number=epoch, error=validation_error,
-                  batch_xs=batch_validation_xs, batch_ys=batch_validation_ys)
+    print_results(mode="Validation", error=validation_error, batch_xs=batch_validation_xs, batch_ys=batch_validation_ys,
+                  epoch_number=epoch)
     print "----------------------------------------------------------------------------------"
-
 
 print "----------------------"
 print "   Training finished  "
 print "----------------------"
 
+
+print "----------------------"
+print "   Start testing...  "
+print "----------------------"
+
+sess.run(train, feed_dict={x: x_test_data, y_: y_test_data})
+test_error = sess.run(loss, feed_dict={x: x_test_data, y_: y_test_data})
+
+print_results(mode="Testing", error=test_error, batch_xs=x_test_data, batch_ys=y_test_data)
+
+print "----------------------------------------------------------------------------------------"
+print "   Testing finished: error ", test_error, ", last validation error ", validation_errors[-1]
+print "----------------------------------------------------------------------------------------"
+
+# Plot
 plt.ylabel('Errors')
 plt.xlabel('Epochs')
 training_line, = plt.plot(training_errors)
