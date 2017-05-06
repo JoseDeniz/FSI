@@ -16,6 +16,13 @@ actions_list = {
     "LEFT": 3
 }
 
+actions_map = {
+    0: "UP",
+    1: "RIGHT",
+    2: "DOWN",
+    3: "LEFT"
+}
+
 actions_vectors = {
     "UP": (-1, 0),
     "RIGHT": (0, 1),
@@ -81,6 +88,39 @@ def qlearning(s1, a, s2):
     return
 
 
+def greedy(state):
+    if max(Q[state]) is 0:
+        return getRndAction(state)
+
+    # 48: [0.0, 0.0, -10000, 3.98]
+    # index = 3 = "UP"
+    # (3, 3) + (-1, 0) = (2, 3) -> 45
+    index = np.argmax(Q[state])
+    actual_coords = getStateCoord(state)
+    next_coord = actual_coords[0] + actions_vectors[actions_map[index]][0],\
+                 actual_coords[1] + actions_vectors[actions_map[index]][1]
+
+    print next_coord
+
+    max_state = getState(next_coord[0], next_coord[1])
+    print max_state
+
+    actions = getActions(max_state)
+    coords = getStateCoord(max_state)
+
+    # (3,3)
+    # ["UP", "DOWN"] --> [(2,3), (4,3)] --> [45, 52]
+
+    next_actions_coords = map(lambda a:
+                              (coords[0] + actions_vectors[a][0], coords[1] + actions_vectors[a][1])
+                              , actions)
+
+    next_states = map(lambda coord: getState(coord[0], coord[1]), next_actions_coords)
+
+    next_states_max = map(lambda s: max(Q[s]), next_states)
+
+    return actions[np.argmax(next_states_max)]
+
 movements = 0
 
 # Episodes
@@ -88,7 +128,8 @@ episodes = 100
 for i in xrange(episodes):
     state = getRndState()
     while state != final_state:
-        action = getRndAction(state)
+        action = greedy(state)
+        print "Action: ", action
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)
@@ -96,7 +137,7 @@ for i in xrange(episodes):
         state = new_state
         movements += 1
 
-print Q
+# print Q
 
 print "Average number of movements: ", (movements / episodes)
 
