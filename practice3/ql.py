@@ -89,37 +89,48 @@ def qlearning(s1, a, s2):
 
 
 def greedy(state):
-    if max(Q[state]) is 0:
+    if max(Q[state]) > 0:
+        index = np.argmax(Q[state])
+        return actions_map[index]
+    return getRndAction(state)
+
+
+def egreedy(state):
+    if (random.randint(0, 1) > 0.5):
         return getRndAction(state)
+    return greedy(state)
 
-    # 48: [0.0, 0.0, -10000, 3.98]
-    # index = 3 = "UP"
-    # (3, 3) + (-1, 0) = (2, 3) -> 45
-    index = np.argmax(Q[state])
-    actual_coords = getStateCoord(state)
-    next_coord = actual_coords[0] + actions_vectors[actions_map[index]][0],\
-                 actual_coords[1] + actions_vectors[actions_map[index]][1]
-
-    print next_coord
-
-    max_state = getState(next_coord[0], next_coord[1])
-    print max_state
-
-    actions = getActions(max_state)
-    coords = getStateCoord(max_state)
-
-    # (3,3)
-    # ["UP", "DOWN"] --> [(2,3), (4,3)] --> [45, 52]
-
-    next_actions_coords = map(lambda a:
-                              (coords[0] + actions_vectors[a][0], coords[1] + actions_vectors[a][1])
-                              , actions)
-
-    next_states = map(lambda coord: getState(coord[0], coord[1]), next_actions_coords)
-
-    next_states_max = map(lambda s: max(Q[s]), next_states)
-
-    return actions[np.argmax(next_states_max)]
+    #if max(Q[state]) is 0:
+    #    return getRndAction(state)
+#
+    ## 48: [0.0, 0.0, -10000, 3.98]
+    ## index = 3 = "UP"
+    ## (3, 3) + (-1, 0) = (2, 3) -> 45
+    #index = np.argmax(Q[state])
+    #actual_coords = getStateCoord(state)
+    #next_coord = actual_coords[0] + actions_vectors[actions_map[index]][0],\
+    #             actual_coords[1] + actions_vectors[actions_map[index]][1]
+#
+    #print next_coord
+#
+    #max_state = getState(next_coord[0], next_coord[1])
+    #print max_state
+#
+    #actions = getActions(max_state)
+    #coords = getStateCoord(max_state)
+#
+    ## (3,3)
+    ## ["UP", "DOWN"] --> [(2,3), (4,3)] --> [45, 52]
+#
+    #next_actions_coords = map(lambda a:
+    #                          (coords[0] + actions_vectors[a][0], coords[1] + actions_vectors[a][1])
+    #                          , actions)
+#
+    #next_states = map(lambda coord: getState(coord[0], coord[1]), next_actions_coords)
+#
+    #next_states_max = map(lambda s: max(Q[s]), next_states)
+#
+    #return actions[np.argmax(next_states_max)]
 
 movements = 0
 
@@ -128,8 +139,7 @@ episodes = 100
 for i in xrange(episodes):
     state = getRndState()
     while state != final_state:
-        action = greedy(state)
-        print "Action: ", action
+        action = egreedy(state)
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)
