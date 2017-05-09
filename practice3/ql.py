@@ -96,7 +96,7 @@ def greedy(state):
 
 
 def egreedy(state):
-    if (random.randint(0, 1) > 0.5):
+    if (random.randint(0, 1) > 0.9):
         return getRndAction(state)
     return greedy(state)
 

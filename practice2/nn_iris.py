@@ -92,19 +92,18 @@ while validation_error <= last_validation_error and difference > 0.001:
         batch_training_ys = y_training_data[jj * batch_size: jj * batch_size + batch_size]
         sess.run(train, feed_dict={x: batch_training_xs, y_: batch_training_ys})
 
-    for kk in xrange(len(x_validation_data) / batch_size):
-        batch_validation_xs = x_validation_data[kk * batch_size: kk * batch_size + batch_size]
-        batch_validation_ys = y_validation_data[kk * batch_size: kk * batch_size + batch_size]
-        sess.run(train, feed_dict={x: batch_validation_xs, y_: batch_validation_ys})
+
 
     # Training
     training_error = sess.run(loss, feed_dict={x: batch_training_xs, y_: batch_training_ys})
     training_errors.append(training_error)
 
-    # Validation
-    validation_error = sess.run(loss, feed_dict={x: batch_validation_xs, y_: batch_validation_ys})
 
+    # Validation
+    
+    validation_error = sess.run(loss, feed_dict={x: x_validation_data, y_: y_validation_data})
     validation_errors.append(validation_error)
+
     if epoch > 1:
         difference = validation_errors[-2] - validation_error
     last_validation_error = validation_errors[-1]
@@ -113,7 +112,7 @@ while validation_error <= last_validation_error and difference > 0.001:
                   epoch_number=epoch)
 
     # Validation
-    print_results(mode="Validation", error=validation_error, batch_xs=batch_validation_xs, batch_ys=batch_validation_ys,
+    print_results(mode="Validation", error=validation_error, batch_xs=x_validation_data, batch_ys=y_validation_data,
                   epoch_number=epoch)
     print "----------------------------------------------------------------------------------"
 
