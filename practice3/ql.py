@@ -88,19 +88,23 @@ def qlearning(s1, a, s2):
     return
 
 
+e_greedy_movements = 0
+greedy_movements = 0
+movements = 0
+
+
 def greedy(state):
     return actions_map[np.argmax(Q[state])] \
         if max(Q[state]) > 0 else getRndAction(state)
 
 
-
 def e_greedy(state):
-    return getRndAction(state) \
-        if random.uniform(0.0, 1.0) > 0.9 else greedy(state)
-
-
-
-movements = 0
+    global e_greedy_movements,greedy_movements
+    if random.uniform(0.0, 1.0) > 0.9:
+        e_greedy_movements += 1
+        return getRndAction(state)
+    greedy_movements += 1
+    return greedy(state)
 
 # Episodes
 episodes = 100
@@ -113,9 +117,9 @@ for i in xrange(episodes):
         new_state = getState(y, x)
         qlearning(state, actions_list[action], new_state)
         state = new_state
-        movements += 1
 
-print "Average number of movements: ", (movements / episodes)
+print "Average number of e_greedy_movements: ", (e_greedy_movements / episodes)
+print "Average number of greedy_movements: ", (greedy_movements / episodes)
 
 s = 0
 ax = plt.axes()
