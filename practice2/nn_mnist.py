@@ -67,7 +67,7 @@ print "----------------------"
 print "   Start training...  "
 print "----------------------"
 
-batch_size = 1
+batch_size = 20
 training_errors = []
 validation_errors = []
 test_errors = []
@@ -83,15 +83,12 @@ while validation_error <= last_validation_error and difference > 0.001:
         batch_training_ys = train_y[jj * batch_size: jj * batch_size + batch_size]
         sess.run(train, feed_dict={x: batch_training_xs, y_: batch_training_ys})
 
-    for kk in xrange(len(valid_x) / batch_size):
-        batch_validation_xs = valid_x[kk * batch_size: kk * batch_size + batch_size]
-        batch_validation_ys = valid_y[kk * batch_size: kk * batch_size + batch_size]
-        sess.run(train, feed_dict={x: batch_validation_xs, y_: batch_validation_ys})
-
     training_error = sess.run(loss, feed_dict={x: batch_training_xs, y_: batch_training_ys})
     training_errors.append(training_error)
 
-    validation_error = sess.run(loss, feed_dict={x: batch_validation_xs, y_: batch_validation_ys})
+    sess.run(train, feed_dict={x: valid_x, y_: valid_y})
+
+    validation_error = sess.run(loss, feed_dict={x: valid_x, y_: valid_y})
     validation_errors.append(validation_error)
     if epoch > 1:
         difference = validation_errors[-2] - validation_error
@@ -101,7 +98,7 @@ while validation_error <= last_validation_error and difference > 0.001:
                   batch_xs=batch_training_xs, batch_ys=batch_training_ys)
 
     print_results(mode="Validation", epoch_number=epoch, error=validation_error,
-                  batch_xs=batch_validation_xs, batch_ys=batch_validation_ys)
+                  batch_xs=valid_x, batch_ys=valid_y)
 
 # ---------------- Visualizing some element of the MNIST dataset --------------
 
