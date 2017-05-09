@@ -93,16 +93,11 @@ def greedy(state):
         if max(Q[state]) > 0 else getRndAction(state)
 
 
-<<<<<<< HEAD
-def egreedy(state):
-    if (random.randint(0, 1) > 0.9):
-        return getRndAction(state)
-    return greedy(state)
-=======
+
 def e_greedy(state):
     return getRndAction(state) \
         if random.uniform(0.0, 1.0) > 0.9 else greedy(state)
->>>>>>> a4e57c7df439f3ed23b24d84e79ccfd020e9f54a
+
 
 
 movements = 0

@@ -2,6 +2,7 @@ import gzip
 import cPickle
 import numpy as np
 import matplotlib
+
 matplotlib.use('Agg')
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -21,6 +22,7 @@ def one_hot(x, n):
     o_h = np.zeros((len(x), n))
     o_h[np.arange(len(x)), x] = 1
     return o_h
+
 
 f = gzip.open('mnist.pkl.gz', 'rb')
 train_set, valid_set, test_set = cPickle.load(f)
@@ -63,6 +65,7 @@ def print_results(mode, error, batch_xs, batch_ys, epoch_number=1):
     for b, r in zip(batch_ys, result):
         print b, "-->", r
 
+
 print "----------------------"
 print "   Start training...  "
 print "----------------------"
@@ -86,19 +89,16 @@ while validation_error <= last_validation_error and difference > 0.001:
     training_error = sess.run(loss, feed_dict={x: batch_training_xs, y_: batch_training_ys})
     training_errors.append(training_error)
 
-    sess.run(train, feed_dict={x: valid_x, y_: valid_y})
-
     validation_error = sess.run(loss, feed_dict={x: valid_x, y_: valid_y})
     validation_errors.append(validation_error)
     if epoch > 1:
         difference = validation_errors[-2] - validation_error
     last_validation_error = validation_errors[-1]
 
-    print_results(mode="Training", epoch_number=epoch, error=training_error,
-                  batch_xs=batch_training_xs, batch_ys=batch_training_ys)
+    print epoch
+    #print_results(mode="Training", error=training_error, batch_xs=batch_training_xs, batch_ys=batch_training_ys,epoch_number=epoch)
 
-    print_results(mode="Validation", epoch_number=epoch, error=validation_error,
-                  batch_xs=valid_x, batch_ys=valid_y)
+    #print_results(mode="Validation", error=validation_error, batch_xs=valid_x, batch_ys=valid_y,epoch_number=epoch)
 
 # ---------------- Visualizing some element of the MNIST dataset --------------
 
@@ -106,7 +106,7 @@ print "----------------------"
 print "   Start testing...  "
 print "----------------------"
 
-sess.run(train, feed_dict={x: test_x, y_: test_y})
+
 test_error = sess.run(loss, feed_dict={x: test_x, y_: test_y})
 
 print_results(mode="Testing", error=test_error, batch_xs=test_x, batch_ys=test_y)
