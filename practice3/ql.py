@@ -89,16 +89,20 @@ def qlearning(s1, a, s2):
 
 
 def greedy(state):
-    if max(Q[state]) > 0:
-        index = np.argmax(Q[state])
-        return actions_map[index]
-    return getRndAction(state)
+    return actions_map[np.argmax(Q[state])] \
+        if max(Q[state]) > 0 else getRndAction(state)
 
 
+<<<<<<< HEAD
 def egreedy(state):
     if (random.randint(0, 1) > 0.9):
         return getRndAction(state)
     return greedy(state)
+=======
+def e_greedy(state):
+    return getRndAction(state) \
+        if random.uniform(0.0, 1.0) > 0.9 else greedy(state)
+>>>>>>> a4e57c7df439f3ed23b24d84e79ccfd020e9f54a
 
 
 movements = 0
@@ -108,7 +112,7 @@ episodes = 100
 for i in xrange(episodes):
     state = getRndState()
     while state != final_state:
-        action = egreedy(state)
+        action = e_greedy(state)
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)

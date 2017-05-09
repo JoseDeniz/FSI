@@ -94,9 +94,12 @@ while validation_error <= last_validation_error and difference > 0.001:
 
 
 
+
+
     # Training
     training_error = sess.run(loss, feed_dict={x: batch_training_xs, y_: batch_training_ys})
     training_errors.append(training_error)
+
 
 
     # Validation
