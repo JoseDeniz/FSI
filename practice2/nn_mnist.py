@@ -79,7 +79,7 @@ epoch = 0
 validation_error = 0.1
 difference = 100.0
 
-while validation_error <= last_validation_error and difference > 0.001:
+while difference > 0.001:
     epoch += 1
     for jj in xrange(len(train_x) / batch_size):
         batch_training_xs = train_x[jj * batch_size: jj * batch_size + batch_size]
@@ -93,7 +93,6 @@ while validation_error <= last_validation_error and difference > 0.001:
     validation_errors.append(validation_error)
     if epoch > 1:
         difference = validation_errors[-2] - validation_error
-    last_validation_error = validation_errors[-1]
 
     print epoch
     #print_results(mode="Training", error=training_error, batch_xs=batch_training_xs, batch_ys=batch_training_ys,epoch_number=epoch)
