@@ -128,12 +128,22 @@ print "   Start testing...  "
 print "----------------------"
 
 
-test_error = sess.run(loss, feed_dict={x: x_test_data, y_: y_test_data})
+#test_error = sess.run(loss, feed_dict={x: x_test_data, y_: y_test_data})
 
-print_results(mode="Testing", error=test_error, batch_xs=x_test_data, batch_ys=y_test_data)
-
+#print_results(mode="Testing", error=test_error, batch_xs=x_test_data, batch_ys=y_test_data)
+error = 0
+result = sess.run(y, feed_dict={x: x_test_data})
+for b, r in zip(y_test_data, result):
+    if np.argmax(b) != np.argmax(r):
+        error += 1
+    print b, "-->", r
+success = 100 - (error * 100 / 15)
+error = error * 100 / 15
+print "----------------------------------------------------------------------------------"
+print "Error:", error, "%"
 print "----------------------------------------------------------------------------------------"
-print "   Testing finished: error ", test_error, ", last validation error ", validation_errors[-1]
+print "Success:", success, "%"
+#print "   Testing finished: error ", test_error, ", last validation error ", validation_errors[-1]
 print "----------------------------------------------------------------------------------------"
 
 # Plot

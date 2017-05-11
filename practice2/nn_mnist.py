@@ -93,11 +93,10 @@ while difference > 0.001:
     validation_errors.append(validation_error)
     if epoch > 1:
         difference = validation_errors[-2] - validation_error
+    print "validation error", validation_error
+    # print_results(mode="Training", error=training_error, batch_xs=batch_training_xs, batch_ys=batch_training_ys,epoch_number=epoch)
 
-    print epoch
-    #print_results(mode="Training", error=training_error, batch_xs=batch_training_xs, batch_ys=batch_training_ys,epoch_number=epoch)
-
-    #print_results(mode="Validation", error=validation_error, batch_xs=valid_x, batch_ys=valid_y,epoch_number=epoch)
+    # print_results(mode="Validation", error=validation_error, batch_xs=valid_x, batch_ys=valid_y,epoch_number=epoch)
 
 # ---------------- Visualizing some element of the MNIST dataset --------------
 
@@ -105,14 +104,29 @@ print "----------------------"
 print "   Start testing...  "
 print "----------------------"
 
+# test_error = sess.run(loss, feed_dict={x: test_x, y_: test_y})
 
-test_error = sess.run(loss, feed_dict={x: test_x, y_: test_y})
+# print_results(mode="Testing", error=test_error, batch_xs=test_x, batch_ys=test_y)
 
-print_results(mode="Testing", error=test_error, batch_xs=test_x, batch_ys=test_y)
+error = 0
+result = sess.run(y, feed_dict={x: test_x})
+for b, r in zip(test_y, result):
+    if np.argmax(b) != np.argmax(r):
+        error += 1
+    print b, "-->", r
 
+success = 100 - (error * 100 / 10000)
+
+error = error * 100 / 10000
+print "----------------------------------------------------------------------------------"
+print "Error:", error, "%"
 print "----------------------------------------------------------------------------------------"
-print "   Testing finished: error ", test_error, ", last validation error ", validation_errors[-1]
+print "Success:", success, "%"
 print "----------------------------------------------------------------------------------------"
+
+# print "   Testing finished: error ", test_error, ", last validation error ", validation_errors[-1]
+
+# print "----------------------------------------------------------------------------------------"
 
 plt.ylabel('Errors')
 plt.xlabel('Epochs')

@@ -2,7 +2,7 @@
 
 import search
 
-ab = search.GPSProblem('A', 'B', search.romania)
+ab = search.GPSProblem('O', 'N', search.romania)
 
 
 print "Breadth first %s" % search.breadth_first_graph_search(ab).path()

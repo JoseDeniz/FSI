@@ -1,5 +1,8 @@
 import random
 import numpy as np
+import matplotlib
+
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # Environment size
@@ -88,62 +91,79 @@ def qlearning(s1, a, s2):
     return
 
 
-e_greedy_movements = 0
-greedy_movements = 0
+movements_average = 0
+
 movements = 0
 
 
 def greedy(state):
+    global movements
     return actions_map[np.argmax(Q[state])] \
         if max(Q[state]) > 0 else getRndAction(state)
 
 
 def e_greedy(state):
-    global e_greedy_movements,greedy_movements
+    global e_greedy_movements
     if random.uniform(0.0, 1.0) > 0.9:
-        e_greedy_movements += 1
         return getRndAction(state)
-    greedy_movements += 1
     return greedy(state)
+
 
 # Episodes
 episodes = 100
+list_movements = []
 for i in xrange(episodes):
     state = getRndState()
     while state != final_state:
-        action = e_greedy(state)
+        #action =getRndAction(state)
+        action = greedy(state)
+        #action = e_greedy(state)
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)
         qlearning(state, actions_list[action], new_state)
         state = new_state
+        movements += 1
+        movements_average +=1
+    print "Number of movements: ", (i, movements)
+    list_movements.append(movements)
+    movements = 0
+print "---------------------------------------"
+print "Number of movements average", (movements_average/episodes)
+print "---------------------------------------"
 
-print "Average number of e_greedy_movements: ", (e_greedy_movements / episodes)
-print "Average number of greedy_movements: ", (greedy_movements / episodes)
+plt.ylabel('Movements')
+plt.xlabel('Epochs')
+movements_line, = plt.plot(list_movements)
+plt.legend(handle=[movements_line],
+           label=["Movements Line"])
+#plt.savefig('greedy.png')
+#plt.savefig('e_greedy.png')
+plt.savefig('random_movements.png')
 
-s = 0
-ax = plt.axes()
-ax.axis([-1, width + 1, -1, height + 1])
+# s = 0
+# ax = plt.axes()
+# ax.axis([-1, width + 1, -1, height + 1])
 
-for j in xrange(height):
-
-    plt.plot([0, width], [j, j], 'b')
-    for i in xrange(width):
-        plt.plot([i, i], [0, height], 'b')
-
-        direction = np.argmax(Q[s])
-        if s != final_state:
-            if direction == 0:
-                ax.arrow(i + 0.5, 0.75 + j, 0, -0.35, head_width=0.08, head_length=0.08, fc='k', ec='k')
-            if direction == 1:
-                ax.arrow(0.25 + i, j + 0.5, 0.35, 0., head_width=0.08, head_length=0.08, fc='k', ec='k')
-            if direction == 2:
-                ax.arrow(i + 0.5, 0.25 + j, 0, 0.35, head_width=0.08, head_length=0.08, fc='k', ec='k')
-            if direction == 3:
-                ax.arrow(0.75 + i, j + 0.5, -0.35, 0., head_width=0.08, head_length=0.08, fc='k', ec='k')
-        s += 1
-
-    plt.plot([i + 1, i + 1], [0, height], 'b')
-    plt.plot([0, width], [j + 1, j + 1], 'b')
+# for j in xrange(height):
+#
+#    plt.plot([0, width], [j, j], 'b')
+#    for i in xrange(width):
+#        plt.plot([i, i], [0, height], 'b')
+#
+#        direction = np.argmax(Q[s])
+#        if s != final_state:
+#            if direction == 0:
+#                ax.arrow(i + 0.5, 0.75 + j, 0, -0.35, head_width=0.08, head_length=0.08, fc='k', ec='k')
+#            if direction == 1:
+#                ax.arrow(0.25 + i, j + 0.5, 0.35, 0., head_width=0.08, head_length=0.08, fc='k', ec='k')
+#            if direction == 2:
+#                ax.arrow(i + 0.5, 0.25 + j, 0, 0.35, head_width=0.08, head_length=0.08, fc='k', ec='k')
+#            if direction == 3:
+#                ax.arrow(0.75 + i, j + 0.5, -0.35, 0., head_width=0.08, head_length=0.08, fc='k', ec='k')
+#        s += 1
+#
+#    plt.plot([i + 1, i + 1], [0, height], 'b')
+#    plt.plot([0, width], [j + 1, j + 1], 'b')
 
 # plt.show()
